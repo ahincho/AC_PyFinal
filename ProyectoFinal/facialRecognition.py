@@ -8,8 +8,11 @@ from tkinter import messagebox as msg
 sizeScreen = "500x250"
 fontLabel = "Century Gothic"
 
-generalScreen = Tk()
-generalScreen.geometry(sizeScreen)
-generalScreen.title("Sistema de Reconocimiento Facial")
+mainScreen = Tk()
+mainScreen.geometry(sizeScreen)
+mainScreen.title("Sistema de Reconocimiento Facial")
+mainScreen.configure(bg = "#151515")
 
-generalScreen.mainloop()
+Label(text = "¡Bienvenido!", fg = "#f4f5f4", bg = "#101010", font = (fontLabel, 18), width = "500", height = "2").pack()
+
+mainScreen.mainloop()
