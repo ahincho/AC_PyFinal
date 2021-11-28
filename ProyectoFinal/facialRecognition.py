@@ -35,13 +35,26 @@ def newScreen(screen, text):
 
 def register():
     global user1
-    global user_entry1
+    global userEntry1
     global screen1
 
     # Creamos la nueva pantalla a la 'altura' de la Principal
     screen1 = Toplevel(mainScreen)
 
     newScreen(screen1, "Registrarse")
+
+# Metodo usado por el Comando o Accion 'Login', se activara al
+# cliquear el Boton 'Iniciar Sesion' de la pantalla principal
+
+def login():
+    global user2
+    global userEntry2
+    global screen2
+
+    # Creamos la nueva pantalla a la 'altura' de la Principal
+    screen1 = Toplevel(mainScreen)
+
+    newScreen(screen1, "Iniciar Sesion")
 
 # Metodo Principal o Main del Programa
 
@@ -54,7 +67,7 @@ Label(text = "¡Bienvenido!", fg = colorWhite, bg = colorBlack, font = (fontLabe
 
 getEnter(mainScreen)
 
-Button(text = "Iniciar Sesion", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), width = "40", command = "").pack()
+Button(text = "Iniciar Sesion", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), width = "40", command = login).pack()
 
 getEnter(mainScreen)
 
