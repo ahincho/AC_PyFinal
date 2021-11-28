@@ -1,8 +1,6 @@
 
 from tkinter import *
 
-from tkinter import messagebox as msg
-
 # Variables Globales para el Tamanio y Fuente
 
 sizeScreen = "400x235"
@@ -24,6 +22,27 @@ colorButton = "#303030"
 def getEnter(screen):
     Label(screen, text = "", bg = colorBackground).pack()
 
+# Metodo que crea un Cuadro de Dialogo o Ventana para los Botones
+
+def newScreen(screen, text):
+    screen.title(text)
+    screen.geometry(sizeScreen)
+    screen.configure(bg = colorBackground)
+    Label(screen, text = f"¡{text}!", fg = colorWhite, bg = colorBlack, font = (fontLabel, 18), width = "500", height = "2").pack()
+
+# Metodo usado por el Comando o Accion 'Register', se activara
+# al cliquear el Boton 'Registrarse' de la pantalla principal
+
+def register():
+    global user1
+    global user_entry1
+    global screen1
+
+    # Creamos la nueva pantalla a la 'altura' de la Principal
+    screen1 = Toplevel(mainScreen)
+
+    newScreen(screen1, "Registrarse")
+
 # Metodo Principal o Main del Programa
 
 mainScreen = Tk()
@@ -39,6 +58,6 @@ Button(text = "Iniciar Sesion", fg = colorWhite, bg = colorButton, activebackgro
 
 getEnter(mainScreen)
 
-Button(text = "Registrarse", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), width = "40", command = "").pack()
+Button(text = "Registrarse", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), width = "40", command = register).pack()
 
 mainScreen.mainloop()
