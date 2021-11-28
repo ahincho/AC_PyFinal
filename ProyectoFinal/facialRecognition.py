@@ -1,6 +1,8 @@
 
 from tkinter import *
 
+import cv2
+
 # Variables Globales para el Tamanio y Fuente
 
 sizeScreen = "400x235"
@@ -72,11 +74,30 @@ def formConfig(screen, user, flag):
     getEnter(screen)
 
     if flag:
-        Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), height="2", width="40", command = "").pack()
+        Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 18), height="2", width="40", command = "").pack()
     else:
-        Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), height="2", width="40", command = "").pack()
+        Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 18), height="2", width="40", command = registerRecording).pack()
     
     return entry
+
+# Metodo para tomar una foto en tiempo real usando la Camara Web y OpenCV
+# Se encendera la camara web para tomar una foto y asignarla a un usuario
+
+def registerRecording():
+    cap = cv2.VideoCapture(0)
+    userReg = user1.get()
+    img = f"{userReg}.jpg"
+
+    while True:
+        ret, frame = cap.read()
+        cv2.imshow("Registro Facial", frame)
+        cv2.putText(frame, 'Presione la tecla ESC para tomar la foto', (10, 20), 2, 0.5, (128, 0, 255), 1, cv2.LINE_AA)
+        if cv2.waitKey(1) == 27:
+            break
+    
+    cv2.imwrite(img, frame)
+    cap.release()
+    cv2.destroyAllWindows()
 
 # Metodo Principal o Main del Programa
 
