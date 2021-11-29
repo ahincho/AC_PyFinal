@@ -74,7 +74,7 @@ def formConfig(screen, user, flag):
     getEnter(screen)
 
     if flag:
-        Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 18), height="2", width="40", command = "").pack()
+        Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 18), height="2", width="40", command = loginRecording).pack()
     else:
         Button(screen, text = "Capturar Rostro", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 18), height="2", width="40", command = registerRecording).pack()
     
@@ -82,6 +82,7 @@ def formConfig(screen, user, flag):
 
 # Metodo para tomar una foto en tiempo real usando la Camara Web y OpenCV
 # Se encendera la camara web para tomar una foto y asignarla a un usuario
+# Este metodo pertenece al Boton Registrarse
 
 def registerRecording():
     cap = cv2.VideoCapture(0)
@@ -91,10 +92,29 @@ def registerRecording():
     while True:
         ret, frame = cap.read()
         cv2.imshow("Registro Facial", frame)
-        cv2.putText(frame, 'Presione la tecla ESC para tomar la foto', (10, 20), 2, 0.5, (128, 0, 255), 1, cv2.LINE_AA)
         if cv2.waitKey(1) == 27:
             break
     
+    cv2.imwrite(img, frame)
+    cap.release()
+    cv2.destroyAllWindows()
+
+# Metodo para tomar una foto en tiempo real usando la Camara Web y OpenCV
+# Se encendera la camara web para tomar una foto y asignarla a un usuario
+# Este metodo pertenece al Boton Iniciar Sesion
+
+def loginRecording():
+    cap = cv2.VideoCapture(0)
+    userLog = user2.get()
+    img = f"{userLog}Login.jpg"
+    imgUser = f"{userLog}.jpg"
+
+    while True:
+        ret, frame = cap.read()
+        cv2.imshow("Inicio de Sesion", frame)
+        if cv2.waitKey(1) == 27:
+            break
+
     cv2.imwrite(img, frame)
     cap.release()
     cv2.destroyAllWindows()
