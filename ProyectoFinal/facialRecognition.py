@@ -3,6 +3,10 @@ from tkinter import *
 
 import cv2
 
+import matplotlib.pyplot as plt
+
+from mtcnn.mtcnn import MTCNN
+
 # Variables Globales para el Tamanio y Fuente
 
 sizeScreen = "400x235"
@@ -98,6 +102,27 @@ def registerRecording():
     cv2.imwrite(img, frame)
     cap.release()
     cv2.destroyAllWindows()
+
+    userEntry1.delete(0, END)
+
+    pixels = plt.imread(img)
+    faces = MTCNN().detect_faces(pixels)
+    getFace(img, faces)
+    # Registrar en base de datos
+
+# Metodo que recorta la imagen o foto tomada y la recorta la
+# imagen de tal manera que solo quede el rostro del usuario
+
+def getFace(img, faces):
+    data = plt.imread(img)
+    for i in range(len(faces)):
+        x1, y1, ancho, alto = faces[i]["box"]
+        x2, y2 = x1 + ancho, y1 + alto
+        plt.subplot(1, len(faces), i + 1)
+        plt.axis("off")
+        face = cv2.resize(data[y1 : y2, x1 : x2], (150,200), interpolation = cv2.INTER_CUBIC)
+        cv2.imwrite(img, face)
+        plt.imshow(data[y1 : y2, x1 : x2])
 
 # Metodo para tomar una foto en tiempo real usando la Camara Web y OpenCV
 # Se encendera la camara web para tomar una foto y asignarla a un usuario
