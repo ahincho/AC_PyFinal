@@ -7,7 +7,7 @@ import json
 
 # Establecer conexion con la Base de Datos
 
-with open('Keys.json') as json_file:
+with open('keys.json') as json_file:
     keys = json.load(json_file)
 
 # Convertir el archivo a un formato binario
