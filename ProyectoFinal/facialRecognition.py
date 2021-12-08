@@ -1,11 +1,20 @@
 
 from tkinter import *
+from tkinter import messagebox as msg
 
 import cv2
 
 import matplotlib.pyplot as plt
 
 from mtcnn.mtcnn import MTCNN
+
+import database as db
+
+import os
+
+# Variable Global para el Path, este debe ser cambiado
+
+path = "C:/Users/Angel/Desktop/ProyectoFinal/"
 
 # Variables Globales para el Tamanio y Fuente
 
@@ -16,6 +25,12 @@ fontLabel = "Century Gothic"
 
 colorWhite = "#f4f5f4"
 colorBlack = "#101010"
+
+# Variables Globales para los colores de los mensajes dentro del sistema
+
+colorSuccess = "\033[1;32;40m"
+colorError = "\033[1;31;40m"
+colorNormal = "\033[0;37;40m"
 
 # Variables Globales para algunos Colores de Elementos
 
@@ -108,7 +123,25 @@ def registerRecording():
     pixels = plt.imread(img)
     faces = MTCNN().detect_faces(pixels)
     getFace(img, faces)
-    # Registrar en base de datos
+    
+    # Registrar en base de datos el rostro
+
+    registerFaceOnDB(img)
+
+# Metodo para registrar un rostro dentro de la Base de Datos
+# con un usuario previamente ya seleccionado o especificado
+
+def registerFaceOnDB(img):
+    nameUser = img.replace(".jpg", "").replace(".png", "")
+    resDB = db.registerUser(nameUser, path + img)
+
+    getEnter(screen1)
+
+    if(resDB["affected"]):
+        printAndShow(screen1, "¡Éxito! Se ha registrado correctamente", 1)
+    else:
+        printAndShow(screen1, "¡Error! No se ha registrado correctamente", 0)
+    os.remove(img)
 
 # Metodo que recorta la imagen o foto tomada y la recorta la
 # imagen de tal manera que solo quede el rostro del usuario
@@ -143,6 +176,17 @@ def loginRecording():
     cv2.imwrite(img, frame)
     cap.release()
     cv2.destroyAllWindows()
+
+# Metodo para mostrar un mensaje segun la accion que realice el Usuario
+
+def printAndShow(screen, text, flag):
+    if flag:
+        print(colorSuccess + text + colorNormal)
+        screen.destroy()
+        msg.showinfo(message=text, title="¡Éxito!")
+    else:
+        print(colorError + text + colorNormal)
+        Label(screen, text=text, fg="red", bg=colorBackground, font=(fontLabel, 12)).pack()
 
 # Metodo Principal o Main del Programa
 
