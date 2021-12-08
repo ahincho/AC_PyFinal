@@ -108,8 +108,13 @@ def registerRecording():
     userReg = user1.get()
     img = f"{userReg}.jpg"
 
+    faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
     while True:
         ret, frame = cap.read()
+        faces = faceClassif.detectMultiScale(frame, 1.1, 5)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x,y), (x + w, y + h), (0, 255, 0), 2)
         cv2.imshow("Registro Facial", frame)
         if cv2.waitKey(1) == 27:
             break
@@ -164,27 +169,55 @@ def getFace(img, faces):
 def loginRecording():
     cap = cv2.VideoCapture(0)
     userLog = user2.get()
-    img = f"{userLog}Login.jpg"
+    imgLog = f"{userLog}Login.jpg"
     imgUser = f"{userLog}.jpg"
+
+    faceClassif = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
     while True:
         ret, frame = cap.read()
+        faces = faceClassif.detectMultiScale(frame, 1.1, 5)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(frame, (x,y), (x + w, y + h), (0, 255, 0), 2)
         cv2.imshow("Inicio de Sesion", frame)
         if cv2.waitKey(1) == 27:
             break
 
-    cv2.imwrite(img, frame)
+    cv2.imwrite(imgLog, frame)
     cap.release()
     cv2.destroyAllWindows()
 
     userEntry2.delete(0, END)
-    pixels = plt.imread(img)
+    pixels = plt.imread(imgLog)
     faces = MTCNN().detect_faces(pixels)
 
-    getFace(img, faces)
+    getFace(imgLog, faces)
     getEnter(screen2)
 
     # Consultar a la Base de Datos y comprobar Rostros
+
+    resDB = db.getUser(userLog, path + imgUser)
+    if(resDB["affected"]):
+        files = os.listdir()
+        if imgUser in files:
+            faceDB = cv2.imread(imgUser, 0)
+            faceLog = cv2.imread(imgLog, 0)
+
+            comp = compatibility(faceDB, faceLog)
+            
+            if comp >= 0.95:
+                print("{}Compatibilidad del {:.1%}{}".format(colorSuccess, float(comp), colorNormal))
+                printShow(screen2, f"Bienvenido, {userLog}", 1)
+            else:
+                print("{}Compatibilidad del {:.1%}{}".format(colorError, float(comp), colorNormal))
+                printShow(screen2, "¡Error! Incopatibilidad de datos", 0)
+            os.remove(imgUser)
+    
+        else:
+            printShow(screen2, "¡Error! Usuario no encontrado", 0)
+    else:
+        printShow(screen2, "¡Error! Usuario no encontrado", 0)
+    os.remove(imgLog)
 
 # Metodo que recibe dos imagenes, siendo mas especificos 2
 # imagenes del Rostro de Usuario y los compara utilizando
@@ -209,14 +242,14 @@ def compatibility(img1, img2):
 
 # Metodo para mostrar un mensaje segun la accion que realice el Usuario
 
-def printShow(screen, msg, flag):
+def printShow(screen, request, flag):
     if flag:
-        print(colorSuccess + msg + colorNormal)
+        print(colorSuccess + request + colorNormal)
         screen.destroy()
-        msg.showinfo(message = msg, title = "¡Éxito!")
+        msg.showinfo(message = request, title = "¡Éxito!")
     else:
-        print(colorError + msg + colorNormal)
-        Label(screen, text = msg, fg = "red", bg = colorBackground, font = (fontLabel, 12)).pack()
+        print(colorError + request + colorNormal)
+        Label(screen, text = request, fg = "red", bg = colorBackground, font = (fontLabel, 12)).pack()
 
 # Metodo Principal o Main del Programa
 
