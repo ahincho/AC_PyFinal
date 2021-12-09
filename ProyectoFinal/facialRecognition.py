@@ -250,7 +250,7 @@ def printShow(screen, request, flag):
         msg.showinfo(message = request, title = "¡Éxito!")
     else:
         print(colorError + request + colorNormal)
-        Label(screen, text = request, fg = "red", bg = colorBackground, font = (fontLabel, 12)).pack()
+        msg.showinfo(message = request, title = "¡Hubo un problema!")
 
 # Metodo Principal o Main del Programa. Aqui encontramos la Interfaz para el Usuario
 
