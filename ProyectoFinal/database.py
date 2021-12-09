@@ -1,5 +1,5 @@
 
-# Script para obtener la conexion con la Base de Datos
+# Script para obtener la conexion e informacion de la Base de Datos
 
 import mysql.connector as db
 
