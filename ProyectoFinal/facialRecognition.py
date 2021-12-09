@@ -12,7 +12,8 @@ import database as db
 
 import os
 
-# Variable Global para el Path, este debe ser cambiado
+# Variable Global para el Path, este debe ser cambiado dependiendo
+# la persona que desee ejecutar el Proyecto en su computadora
 
 path = "C:/Users/Angel/Desktop/ProyectoFinal/"
 
@@ -210,7 +211,7 @@ def loginRecording():
                 printShow(screen2, f"Bienvenido, {userLog}", 1)
             else:
                 print("{}Compatibilidad del {:.1%}{}".format(colorError, float(comp), colorNormal))
-                printShow(screen2, "¡Error! Incopatibilidad de datos", 0)
+                printShow(screen2, "¡Error! Incompatibilidad de datos", 0)
             os.remove(imgUser)
     
         else:
@@ -251,7 +252,7 @@ def printShow(screen, request, flag):
         print(colorError + request + colorNormal)
         Label(screen, text = request, fg = "red", bg = colorBackground, font = (fontLabel, 12)).pack()
 
-# Metodo Principal o Main del Programa
+# Metodo Principal o Main del Programa. Aqui encontramos la Interfaz para el Usuario
 
 mainScreen = Tk()
 mainScreen.geometry(sizeScreen)
