@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 
 from mtcnn.mtcnn import MTCNN
 
+import win32com.client
+
 import database as db
 
 import os
@@ -21,6 +23,10 @@ path = "C:/Users/Angel/Desktop/ProyectoFinal/"
 
 sizeScreen = "400x235"
 fontLabel = "Century Gothic"
+
+# Variable Global Speaker para devolver mensajes de voz
+
+speaker = win32com.client.Dispatch('SAPI.SpVoice')
 
 # Variables Globales para algunos Colores
 
@@ -60,6 +66,8 @@ def register():
     global userEntry1
     global screen1
 
+    speakToUser("Iniciando Registro de Usuario")
+
     # Creamos la nueva pantalla a la 'altura' de la Principal
     screen1 = Toplevel(mainScreen)
     user1 = StringVar()
@@ -74,6 +82,8 @@ def login():
     global user2
     global userEntry2
     global screen2
+
+    speakToUser("Iniciando Sesion")
 
     # Creamos la nueva pantalla a la 'altura' de la Principal
     screen2 = Toplevel(mainScreen)
@@ -105,6 +115,8 @@ def formConfig(screen, user, flag):
 # Este metodo pertenece al Boton Registrarse
 
 def registerRecording():
+    speakToUser("Iniciando captura de video")
+    speakToUser("Presionar la tecla Escape para tomar la foto")
     cap = cv2.VideoCapture(0)
     userReg = user1.get()
     img = f"{userReg}.jpg"
@@ -144,8 +156,10 @@ def registerFaceOnDB(img):
     getEnter(screen1)
 
     if(resDB["affected"]):
+        speakToUser("¡Éxito! Se ha registrado correctamente")
         printShow(screen1, "¡Éxito! Se ha registrado correctamente", 1)
     else:
+        speakToUser("¡Error! No se ha registrado correctamente")
         printShow(screen1, "¡Error! No se ha registrado correctamente", 0)
     os.remove(img)
 
@@ -168,6 +182,8 @@ def getFace(img, faces):
 # Este metodo pertenece al Boton Iniciar Sesion
 
 def loginRecording():
+    speakToUser("Iniciando captura de video")
+    speakToUser("Presionar la tecla Escape para tomar la foto")
     cap = cv2.VideoCapture(0)
     userLog = user2.get()
     imgLog = f"{userLog}Login.jpg"
@@ -205,18 +221,25 @@ def loginRecording():
             faceLog = cv2.imread(imgLog, 0)
 
             comp = compatibility(faceDB, faceLog)
-            
+            compPercentage = "Compatibilidad del {:.1%}".format(float(comp))
+
             if comp >= 0.95:
                 print("{}Compatibilidad del {:.1%}{}".format(colorSuccess, float(comp), colorNormal))
+                speakToUser(f"Bienvenido {userLog}")
+                speakToUser(compPercentage)
                 printShow(screen2, f"Bienvenido, {userLog}", 1)
             else:
                 print("{}Compatibilidad del {:.1%}{}".format(colorError, float(comp), colorNormal))
+                speakToUser("¡Error! Incompatibilidad de datos")
+                speakToUser(compPercentage + ", se necesita como minimo un 95%")
                 printShow(screen2, "¡Error! Incompatibilidad de datos", 0)
             os.remove(imgUser)
     
         else:
+            speakToUser("¡Error! Usuario no encontrado")
             printShow(screen2, "¡Error! Usuario no encontrado", 0)
     else:
+        speakToUser("¡Error! Usuario no encontrado")
         printShow(screen2, "¡Error! Usuario no encontrado", 0)
     os.remove(imgLog)
 
@@ -235,7 +258,7 @@ def compatibility(img1, img2):
     comp = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck = True)
 
     matches = comp.match(dac1, dac2)
-
+    
     similar = [x for x in matches if x.distance < 70]
     if len(matches) == 0:
         return 0
@@ -251,6 +274,11 @@ def printShow(screen, request, flag):
     else:
         print(colorError + request + colorNormal)
         msg.showinfo(message = request, title = "¡Hubo un problema!")
+
+# Metodo que recibe un mensaje y lo reproduce en el computador del Usuario
+
+def speakToUser(message):
+    speaker.Speak(message)
 
 # Metodo Principal o Main del Programa. Aqui encontramos la Interfaz para el Usuario
 
@@ -268,5 +296,7 @@ Button(text = "Iniciar Sesion", fg = colorWhite, bg = colorButton, activebackgro
 getEnter(mainScreen)
 
 Button(text = "Registrarse", fg = colorWhite, bg = colorButton, activebackground = colorBackground, borderwidth = 0, font = (fontLabel, 16), width = "40", command = register).pack()
+
+speakToUser("Bienvenido al Sistema de Registro Facial")
 
 mainScreen.mainloop()
